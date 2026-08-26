@@ -1,0 +1,27 @@
+meta {
+  name: 08 - Cerrar Sesion - Usuario no existe
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/api/chat/cerrar-sesion
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "userId": "usuario-que-no-existe-123"
+  }
+}
+
+tests {
+  test("status is 404", function () {
+    expect(res.getStatus()).to.equal(404);
+  });
+}

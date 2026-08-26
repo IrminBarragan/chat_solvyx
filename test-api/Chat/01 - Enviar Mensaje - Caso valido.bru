@@ -1,0 +1,38 @@
+meta {
+  name: 01 - Enviar Mensaje - Caso valido
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base-url}}/api/chat/mensaje
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "userId": "user-001",
+    "nombre": "Juan Perez",
+    "mensaje": "Hola, ultimamente he sentido muchas ganas de fumar vape cuando estoy estresado. Que puedo hacer?"
+  }
+}
+
+tests {
+  test("status is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  
+  test("responde con 'respuesta' y 'historialId'", function () {
+    expect(res.getBody()).to.have.property("respuesta");
+    expect(res.getBody()).to.have.property("historialId");
+  });
+  
+  test("guarda historialId para las siguientes peticiones", function () {
+    bru.setVar("historialId", res.getBody().historialId);
+  });
+}

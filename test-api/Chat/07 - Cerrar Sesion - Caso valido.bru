@@ -1,0 +1,32 @@
+meta {
+  name: 07 - Cerrar Sesion - Caso valido
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/chat/cerrar-sesion
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "userId": "user-001"
+  }
+}
+
+tests {
+  test("status is 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("el historial queda CERRADO", function () {
+    expect(res.getBody().status).to.equal("CERRADO");
+    expect(res.getBody()).to.have.property("historialId");
+  });
+}

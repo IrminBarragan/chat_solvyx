@@ -1,0 +1,33 @@
+meta {
+  name: 04 - Enviar Mensaje - Mensaje muy largo
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/chat/mensaje
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "userId": "user-001",
+    "nombre": "Juan Perez",
+    "mensaje": "Quiero contarte con mucho detalle todo lo que me ha pasado esta semana porque siento que necesito hablar de esto con alguien de confianza y no se muy bien por donde empezar, pero voy a intentar explicarlo lo mejor posible aunque sea un poco largo. Quiero contarte con mucho detalle todo lo que me ha pasado esta semana porque siento que necesito hablar de esto con alguien de confianza y no se muy bien por donde empezar, pero voy a intentar explicarlo lo mejor posible aunque sea un poco largo. Quiero contarte con mucho detalle todo lo que me ha pasado esta semana porque siento que necesito hablar de esto con alguien de confianza."
+  }
+}
+
+tests {
+  test("status is 400", function () {
+    expect(res.getStatus()).to.equal(400);
+  });
+
+  test("el error menciona el limite de caracteres", function () {
+    expect(res.getBody().mensaje.toLowerCase()).to.include("600");
+  });
+}

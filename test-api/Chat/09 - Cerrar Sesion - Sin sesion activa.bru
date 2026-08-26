@@ -1,0 +1,27 @@
+meta {
+  name: 09 - Cerrar Sesion - Sin sesion activa
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/chat/cerrar-sesion
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "userId": "user-001"
+  }
+}
+
+tests {
+  test("status is 404 (ya se habia cerrado en el request 07)", function () {
+    expect(res.getStatus()).to.equal(404);
+  });
+}
