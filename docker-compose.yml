@@ -1,0 +1,47 @@
+# Levanta la API + MySQL en la VPS:
+#   cp .env.example .env   (y edita los valores)
+#   docker compose up -d --build
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: solvyx-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Define MYSQL_ROOT_PASSWORD en .env}
+      MYSQL_DATABASE: ${DB_NAME:?Define DB_NAME en .env}
+      MYSQL_USER: ${DB_USER:?Define DB_USER en .env}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Define DB_PASSWORD en .env}
+      TZ: ${TZ:-America/Mexico_City}
+    # utf8mb4 para acentos, ñ y emojis en los mensajes del chat
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    volumes:
+      - db_data:/var/lib/mysql
+    # Sin "ports": MySQL solo es accesible desde la red interna de Docker, no desde internet.
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u root -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  app:
+    build: .
+    image: chat-solvyx:latest
+    container_name: solvyx-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy   # espera a que MySQL acepte conexiones, no solo a que arranque
+    environment:
+      # "db" es el nombre del servicio: Docker lo resuelve por DNS dentro de la red del compose
+      DATABASE_URL: jdbc:mysql://db:3306/${DB_NAME}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=${TZ:-America/Mexico_City}
+      DATABASE_USERNAME: ${DB_USER}
+      DATABASE_PASSWORD: ${DB_PASSWORD}
+      API_KEY: ${API_KEY:?Define API_KEY en .env}
+      TZ: ${TZ:-America/Mexico_City}
+    ports:
+      - "${APP_PORT:-8080}:8080"
+
+volumes:
+  db_data:
