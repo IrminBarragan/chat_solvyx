@@ -1,6 +1,6 @@
 # ---------- Etapa 1: build ----------
 # Imagen con JDK + Maven para compilar. No llega a la imagen final.
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM docker.io/library/maven:3.9-eclipse-temurin-21 AS build
 WORKDIR /app
 
 # Primero solo el pom: si no cambian las dependencias, Docker reutiliza esta capa en cache.
@@ -14,7 +14,7 @@ RUN mvn -B -q package -DskipTests \
 
 # ---------- Etapa 2: runtime ----------
 # Solo JRE: imagen más pequeña y con menos superficie de ataque.
-FROM eclipse-temurin:21-jre
+FROM docker.io/library/eclipse-temurin:21-jre
 WORKDIR /app
 
 # Usuario sin privilegios: si alguien compromete la app, no es root dentro del contenedor.

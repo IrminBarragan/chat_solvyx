@@ -4,7 +4,7 @@
 
 services:
   db:
-    image: mysql:8.4
+    image: docker.io/library/mysql:8.4
     container_name: solvyx-db
     restart: unless-stopped
     environment:
@@ -27,7 +27,7 @@ services:
 
   app:
     build: .
-    image: chat-solvyx:latest
+    image: localhost/chat-solvyx:latest
     container_name: solvyx-app
     restart: unless-stopped
     depends_on:
