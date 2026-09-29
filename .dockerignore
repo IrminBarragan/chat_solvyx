@@ -1,0 +1,10 @@
+# Nunca enviar secretos ni artefactos locales al contexto de build
+.env
+.git
+.idea
+.vscode
+target
+test-api
+docs
+*.iml
+HELP.md
